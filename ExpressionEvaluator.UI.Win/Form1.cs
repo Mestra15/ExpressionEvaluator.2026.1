@@ -63,13 +63,12 @@ namespace ExpressionEvaluator.UI.Win
 
         private void BorrarUltimoCaracter()
         {
-            if (txtDisplay.Text.Length > 0)
+            if (txtDisplay.TextLength > 0)
             {
-                txtDisplay.Text = txtDisplay.Text.Substring(0, txtDisplay.Text.Length - 1);
+                txtDisplay.Text = txtDisplay.Text.Substring(0, txtDisplay.TextLength - 1);
             }
         }
 
-        // 🔥 MODIFICADO (YA NO USA DATATABLE)
         private void EjecutarCalculo()
         {
             try
@@ -108,7 +107,6 @@ namespace ExpressionEvaluator.UI.Win
             return expresion;
         }
 
-        // 🔥 NUEVO (EVALUADOR CON PILAS)
         private double EvaluarExpresion(string expresion)
         {
             var valores = new Stack<double>();
@@ -192,10 +190,7 @@ namespace ExpressionEvaluator.UI.Win
             }
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+        private void Form1_Load(object sender, EventArgs e) { }
 
         private void btn7_Click(object sender, EventArgs e) { txtDisplay.Text += "7"; }
         private void btn8_Click(object sender, EventArgs e) { txtDisplay.Text += "8"; }
@@ -216,47 +211,18 @@ namespace ExpressionEvaluator.UI.Win
 
         private void btnClear_Click_1(object sender, EventArgs e)
         {
-            txtDisplay.Text = txtDisplay.Text.Substring(0, txtDisplay.TextLength - 1);
+            if (txtDisplay.TextLength > 0)
+                txtDisplay.Text = txtDisplay.Text.Substring(0, txtDisplay.TextLength - 1);
         }
 
-        private void btnPow_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += "^";
-        }
+        private void btnPow_Click(object sender, EventArgs e) { txtDisplay.Text += "^"; }
+        private void btnOpenParenthesis_Click(object sender, EventArgs e) { txtDisplay.Text += "("; }
+        private void btnCloseParenthesis_Click(object sender, EventArgs e) { txtDisplay.Text += ")"; }
+        private void btnMultiply_Click(object sender, EventArgs e) { txtDisplay.Text += "*"; }
+        private void btnDivide_Click(object sender, EventArgs e) { txtDisplay.Text += "/"; }
+        private void btnMinus_Click(object sender, EventArgs e) { txtDisplay.Text += "-"; }
+        private void btnplus_Click(object sender, EventArgs e) { txtDisplay.Text += "+"; }
 
-        private void btnOpenParenthesis_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += "(";
-        }
-
-        private void btnCloseParenthesis_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += ")";
-        }
-
-        private void btnMultiply_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += "*";
-        }
-
-        private void btnDivide_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += "/";
-        }
-
-        private void btnMinus_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += "-";
-        }
-
-        private void btnplus_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text += "+";
-        }
-
-        private void btnResult_Click(object sender, EventArgs e)
-        {
-
-        }
+        private void btnResult_Click(object sender, EventArgs e) { }
     }
 }
