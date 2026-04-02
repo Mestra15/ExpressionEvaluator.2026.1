@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace ExpressionEvaluator.UI.Win
@@ -13,7 +12,6 @@ namespace ExpressionEvaluator.UI.Win
             AsignarEventosBotones();
         }
 
-        // 🔥 CORREGIDO: solo asigna a botones especiales
         private void AsignarEventosBotones()
         {
             foreach (Control control in this.Controls)
@@ -50,16 +48,7 @@ namespace ExpressionEvaluator.UI.Win
                 case "Delete":
                     BorrarUltimoCaracter();
                     break;
-
-                default:
-                    AgregarTextoPantalla(textoBoton);
-                    break;
             }
-        }
-
-        private void AgregarTextoPantalla(string texto)
-        {
-            txtDisplay.Text += texto;
         }
 
         private void LimpiarPantalla()
@@ -120,10 +109,13 @@ namespace ExpressionEvaluator.UI.Win
                     }
                     else if (c == ')')
                     {
-                        while (operadores.Peek() != "(")
+                        while (operadores.Count > 0 && operadores.Peek() != "(")
+                        {
                             salida.Enqueue(operadores.Pop());
+                        }
 
-                        operadores.Pop();
+                        if (operadores.Count > 0)
+                            operadores.Pop();
                     }
                     else
                     {
@@ -161,6 +153,9 @@ namespace ExpressionEvaluator.UI.Win
                 }
                 else
                 {
+                    if (pila.Count < 2)
+                        throw new Exception("Expresión inválida");
+
                     double b = pila.Pop();
                     double a = pila.Pop();
 
@@ -211,19 +206,9 @@ namespace ExpressionEvaluator.UI.Win
         private void btnDot_Click(object sender, EventArgs e) 
         { txtDisplay.Text += "."; }
 
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            txtDisplay.Text = String.Empty;
-        }
-
-        private void btnClear_Click_1(object sender, EventArgs e)
-        {
-            if (txtDisplay.TextLength > 0)
-                txtDisplay.Text = txtDisplay.Text.Substring(0, txtDisplay.TextLength - 1);
-        }
-
-        private void btnPow_Click(object sender, EventArgs e) { txtDisplay.Text += "^"; }
-        private void btnOpenParenthesis_Click(object sender, EventArgs e) 
+        private void btnPow_Click(object sender, EventArgs e) 
+        { txtDisplay.Text += "^"; }
+        private void btnOpenParenthesis_Click(object sender, EventArgs e)
         { txtDisplay.Text += "("; }
         private void btnCloseParenthesis_Click(object sender, EventArgs e)
         { txtDisplay.Text += ")"; }
