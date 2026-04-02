@@ -87,18 +87,21 @@ namespace ExpressionEvaluator.UI.Win
             }
         }
 
+        // ✅ CORREGIDO AQUÍ
         private string ProcesarPotencias(string expresion)
         {
-            Regex patronPotencia = new Regex(@"(\d+(\.\d+)?|\([^\(\)]+\))\^(\d+(\.\d+)?|\([^\(\)]+\))");
+            Regex patron = new Regex(@"(\d+(\.\d+)?)\^(\d+(\.\d+)?)");
 
-            while (patronPotencia.IsMatch(expresion))
+            while (patron.IsMatch(expresion))
             {
-                expresion = patronPotencia.Replace(expresion, coincidencia =>
+                expresion = patron.Replace(expresion, match =>
                 {
-                    string baseNumero = coincidencia.Groups[1].Value;
-                    string exponente = coincidencia.Groups[3].Value;
+                    double baseNum = double.Parse(match.Groups[1].Value);
+                    double expNum = double.Parse(match.Groups[3].Value);
 
-                    return $"Math.Pow({baseNumero},{exponente})";
+                    double resultado = Math.Pow(baseNum, expNum);
+
+                    return resultado.ToString();
                 });
             }
 
