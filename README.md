@@ -1,4 +1,5 @@
 # ExpressionEvaluator
+Complete calculator with graphical interface
 
 A mathematical expression evaluator built with .NET 10 and C#. It parses and evaluates infix expressions (e.g. `2*7/4-(8-9^(1/2))+6`) using the **shunting-yard algorithm** to convert them to postfix notation, then computes the result from the postfix representation.
 
