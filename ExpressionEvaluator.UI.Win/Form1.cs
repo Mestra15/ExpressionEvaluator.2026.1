@@ -13,13 +13,19 @@ namespace ExpressionEvaluator.UI.Win
             AsignarEventosBotones();
         }
 
+        // 🔥 CORREGIDO: solo asigna a botones especiales
         private void AsignarEventosBotones()
         {
             foreach (Control control in this.Controls)
             {
                 if (control is Button boton)
                 {
-                    boton.Click += EventoClickBoton;
+                    if (boton.Text == "=" ||
+                        boton.Text == "Clear" ||
+                        boton.Text == "Delete")
+                    {
+                        boton.Click += EventoClickBoton;
+                    }
                 }
             }
         }
@@ -69,7 +75,6 @@ namespace ExpressionEvaluator.UI.Win
             }
         }
 
-       
         private void EjecutarCalculo()
         {
             try
@@ -88,7 +93,6 @@ namespace ExpressionEvaluator.UI.Win
             }
         }
 
-        
         private Queue<string> InfixToPostfix(string expresion)
         {
             Queue<string> salida = new Queue<string>();
@@ -143,7 +147,6 @@ namespace ExpressionEvaluator.UI.Win
             return salida;
         }
 
-        
         private double EvaluarPostfijo(Queue<string> cola)
         {
             Stack<double> pila = new Stack<double>();
@@ -175,7 +178,6 @@ namespace ExpressionEvaluator.UI.Win
             return pila.Pop();
         }
 
-        
         private int Prioridad(string op)
         {
             if (op == "+" || op == "-") return 1;
@@ -220,19 +222,18 @@ namespace ExpressionEvaluator.UI.Win
                 txtDisplay.Text = txtDisplay.Text.Substring(0, txtDisplay.TextLength - 1);
         }
 
-        private void btnPow_Click(object sender, EventArgs e) 
-        { txtDisplay.Text += "^"; }
-        private void btnOpenParenthesis_Click(object sender, EventArgs e)
+        private void btnPow_Click(object sender, EventArgs e) { txtDisplay.Text += "^"; }
+        private void btnOpenParenthesis_Click(object sender, EventArgs e) 
         { txtDisplay.Text += "("; }
-        private void btnCloseParenthesis_Click(object sender, EventArgs e) 
+        private void btnCloseParenthesis_Click(object sender, EventArgs e)
         { txtDisplay.Text += ")"; }
-        private void btnMultiply_Click(object sender, EventArgs e) 
+        private void btnMultiply_Click(object sender, EventArgs e)
         { txtDisplay.Text += "*"; }
         private void btnDivide_Click(object sender, EventArgs e) 
         { txtDisplay.Text += "/"; }
         private void btnMinus_Click(object sender, EventArgs e) 
         { txtDisplay.Text += "-"; }
-        private void btnplus_Click(object sender, EventArgs e)
+        private void btnplus_Click(object sender, EventArgs e) 
         { txtDisplay.Text += "+"; }
 
         private void btnResult_Click(object sender, EventArgs e) { }
