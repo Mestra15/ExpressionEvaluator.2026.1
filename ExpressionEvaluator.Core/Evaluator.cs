@@ -1,109 +1,136 @@
-﻿namespace ExpressionEvaluator.Core;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 
-public class Evaluator
+namespace ExpressionEvaluator.Core
 {
-    public static double Evaluate(string infix)
+    public class Evaluator
     {
-        var postfix = InfixToPostfix(infix);
-        return EvaluatePostfix(postfix);
-    }
-
-    private static string InfixToPostfix(string infix)
-    {
-        var postFix = string.Empty;
-        var stack = new Stack<char>();
-        foreach (var item in infix)
+        public static double Evaluate(string infix)
         {
-            if (IsOperator(item))
+            var postfix = InfixToPostfix(infix);
+            return EvaluatePostfix(postfix);
+        }
+
+        private static List<string> InfixToPostfix(string infix)
+        {
+            var output = new List<string>();
+            var stack = new Stack<string>();
+
+            var tokens = Tokenize(infix);
+
+            foreach (var token in tokens)
             {
-                if (stack.Count == 0)
+                if (double.TryParse(token, NumberStyles.Any, CultureInfo.InvariantCulture, out _))
                 {
-                    stack.Push(item);
+                    output.Add(token);
+                }
+                else if (IsOperator(token))
+                {
+                    while (stack.Count > 0 && Priority(stack.Peek()) >= Priority(token))
+                    {
+                        output.Add(stack.Pop());
+                    }
+                    stack.Push(token);
+                }
+                else if (token == "(")
+                {
+                    stack.Push(token);
+                }
+                else if (token == ")")
+                {
+                    while (stack.Peek() != "(")
+                    {
+                        output.Add(stack.Pop());
+                    }
+                    stack.Pop();
+                }
+            }
+
+            while (stack.Count > 0)
+            {
+                output.Add(stack.Pop());
+            }
+
+            return output;
+        }
+
+        private static double EvaluatePostfix(List<string> postfix)
+        {
+            var stack = new Stack<double>();
+
+            foreach (var token in postfix)
+            {
+                if (double.TryParse(token, NumberStyles.Any, CultureInfo.InvariantCulture, out double number))
+                {
+                    stack.Push(number);
                 }
                 else
                 {
-                    if (item == ')')
+                    double b = stack.Pop();
+                    double a = stack.Pop();
+
+                    stack.Push(token switch
                     {
-                        do
-                        {
-                            postFix += stack.Pop();
-                        } while (stack.Peek() != '(');
-                        stack.Pop();
-                    }
-                    else
-                    {
-                        if (PriorityInfix(item) > PriorityStack(stack.Peek()))
-                        {
-                            stack.Push(item);
-                        }
-                        else
-                        {
-                            postFix += stack.Pop();
-                            stack.Push(item);
-                        }
-                    }
+                        "+" => a + b,
+                        "-" => a - b,
+                        "*" => a * b,
+                        "/" => a / b,
+                        "^" => Math.Pow(a, b),
+                        _ => throw new Exception("Error")
+                    });
                 }
             }
-            else
-            {
-                postFix += item;
-            }
+
+            return stack.Pop();
         }
-        while (stack.Count > 0)
+
+        private static List<string> Tokenize(string input)
         {
-            postFix += stack.Pop();
-        }
-        return postFix;
-    }
+            var tokens = new List<string>();
+            var number = "";
 
-    private static int PriorityStack(char item) => item switch
-    {
-        '^' => 3,
-        '*' => 2,
-        '/' => 2,
-        '+' => 1,
-        '-' => 1,
-        '(' => 0,
-        _ => throw new Exception("Sintax error."),
-    };
-
-    private static int PriorityInfix(char item) => item switch
-    {
-        '^' => 4,
-        '*' => 2,
-        '/' => 2,
-        '+' => 1,
-        '-' => 1,
-        '(' => 5,
-        _ => throw new Exception("Sintax error."),
-    };
-
-    private static double EvaluatePostfix(string postfix)
-    {
-        var stack = new Stack<double>();
-        foreach (char item in postfix)
-        {
-            if (IsOperator(item))
+            foreach (char c in input.Replace(",", "."))
             {
-                var b = stack.Pop();
-                var a = stack.Pop();
-                stack.Push(item switch
+                if (char.IsDigit(c) || c == '.')
                 {
-                    '+' => a + b,
-                    '-' => a - b,
-                    '*' => a * b,
-                    '/' => a / b,
-                    '^' => Math.Pow(a, b),
-                    _ => throw new Exception("Sintax error."),
-                });
-            }
-            else
-            {
-                stack.Push(double.Parse(item.ToString()));
-            }
-        }
-        return stack.Pop();
-    }
+                    number += c;
+                }
+                else
+                {
+                    if (number != "")
+                    {
+                        tokens.Add(number);
+                        number = "";
+                    }
 
-    private static bool IsOperator(char item) => "+-*/^()".Contains(item);
+                    if (!char.IsWhiteSpace(c))
+                        tokens.Add(c.ToString());
+                }
+            }
+
+            if (number != "")
+                tokens.Add(number);
+
+            return tokens;
+        }
+
+        private static bool IsOperator(string op)
+        {
+            return op == "+" || op == "-" || op == "*" || op == "/" || op == "^";
+        }
+
+        private static int Priority(string op)
+        {
+            return op switch
+            {
+                "^" => 3,
+                "*" => 2,
+                "/" => 2,
+                "+" => 1,
+                "-" => 1,
+                _ => 0
+            };
+        }
+    }
 }
