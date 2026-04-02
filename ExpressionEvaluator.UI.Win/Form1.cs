@@ -87,7 +87,7 @@ namespace ExpressionEvaluator.UI.Win
             }
         }
 
-        
+
         private string ProcesarPotencias(string expresion)
         {
             Regex patron = new Regex(@"(\d+(\.\d+)?)\^(\d+(\.\d+)?)");
